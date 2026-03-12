@@ -1,4 +1,4 @@
-# vadivelkarthick1989.github.io
+# Karthick vadivel
 
-hello 
+ i am senior data scientist @ SLB with decades of AI/ML expertise
 
