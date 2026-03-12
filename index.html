@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,116 +7,294 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         
         body {
             font-family: 'Inter', sans-serif;
-            scroll-behavior: smooth;
+            overflow-x: hidden;
+            background-color: #0f172a; /* slate-900 */
+            color: #e2e8f0; /* slate-200 */
         }
 
+        /* Animated Gradient Text */
+        @keyframes shine {
+            to {
+                background-position: 200% center;
+            }
+        }
+        
         .gradient-text {
-            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            background: linear-gradient(135deg, #818cf8 0%, #e879f9 50%, #818cf8 100%);
+            background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shine 4s linear infinite;
+        }
+
+        /* Glassmorphism - Dark Only */
+        .glass-nav {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .glass-card {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, border-color 0.4s ease;
+        }
+        
+        .glass-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
         }
 
-        .dark .glass-card {
-            background: rgba(15, 23, 42, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        /* Animations */
+        @keyframes blob {
+            0% { transform: translate(0px, 0px) scale(1) rotate(0deg); }
+            33% { transform: translate(30px, -50px) scale(1.1) rotate(10deg); }
+            66% { transform: translate(-20px, 20px) scale(0.9) rotate(-10deg); }
+            100% { transform: translate(0px, 0px) scale(1) rotate(0deg); }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
 
+        .animate-blob {
+            animation: blob 10s infinite alternate;
+        }
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+        .animation-delay-2000 { animation-delay: 2s; }
+        .animation-delay-4000 { animation-delay: 4s; }
+
+        /* Scroll Reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Timeline enhancements with drawing animation */
+        .timeline-container {
+            position: relative;
+        }
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3px;
+            height: 0; /* Starts at 0 for animation */
+            background: linear-gradient(to bottom, transparent, #818cf8, #c026d3, transparent);
+            z-index: 0;
+            opacity: 0.6;
+            transition: height 2s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .timeline-container.active .timeline-line {
+            height: 100%;
+        }
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%) scale(0);
+            width: 20px;
+            height: 20px;
+            background: #4f46e5;
+            border: 4px solid #0f172a;
+            border-radius: 50%;
+            top: 32px;
+            box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.2);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .timeline-item.active .timeline-dot {
+            transform: translateX(-50%) scale(1);
+        }
+        .timeline-item:hover .timeline-dot {
+            transform: translateX(-50%) scale(1.3);
+            background: #c026d3;
+            box-shadow: 0 0 15px rgba(192, 38, 211, 0.6);
+        }
+
+        @media (max-width: 768px) {
+            .timeline-line { left: 24px; transform: none; }
+            .timeline-dot { left: 24px; transform: translateX(-50%) scale(0); }
+            .timeline-item.active .timeline-dot { transform: translateX(-50%) scale(1); }
+            .timeline-item:hover .timeline-dot { transform: translateX(-50%) scale(1.3); }
+        }
+
+        /* Skill Tags */
         .skill-tag {
             transition: all 0.3s ease;
         }
-
         .skill-tag:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-
-        section {
-            padding: 80px 0;
+            transform: translateY(-3px) scale(1.05);
+            filter: brightness(1.2);
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900 transition-colors duration-300">
+<body class="selection:bg-indigo-500/30">
+    
+    <!-- Background Aurora Blobs -->
+    <div class="fixed inset-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
+        <div class="absolute top-0 -left-4 w-96 h-96 bg-purple-900 rounded-full mix-blend-screen filter blur-[100px] opacity-30 animate-blob"></div>
+        <div class="absolute top-0 -right-4 w-96 h-96 bg-indigo-900 rounded-full mix-blend-screen filter blur-[100px] opacity-30 animate-blob animation-delay-2000"></div>
+        <div class="absolute -bottom-8 left-20 w-96 h-96 bg-pink-900 rounded-full mix-blend-screen filter blur-[100px] opacity-20 animate-blob animation-delay-4000"></div>
+    </div>
+
     <!-- Navigation -->
-    <nav class="fixed w-full z-50 glass-card top-0">
+    <nav class="fixed w-full z-50 glass-nav transition-all duration-300" id="navbar">
         <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="#" class="text-xl font-bold gradient-text">KV.</a>
-            <div class="hidden md:flex space-x-8 font-medium">
-                <a href="#about" class="hover:text-indigo-600 transition">About</a>
-                <a href="#experience" class="hover:text-indigo-600 transition">Experience</a>
-                <a href="#projects" class="hover:text-indigo-600 transition">Projects</a>
-                <a href="#contact" class="hover:text-indigo-600 transition">Contact</a>
+            <a href="#" class="text-2xl font-extrabold tracking-tighter gradient-text">KV.</a>
+            <div class="flex space-x-8 font-semibold text-sm tracking-wide">
+                <a href="#about" class="hover:text-indigo-400 transition-colors">About</a>
+                <a href="#experience" class="hover:text-indigo-400 transition-colors">Experience</a>
             </div>
-            <button id="theme-toggle" class="p-2 rounded-full hover:bg-slate-200 transition">
-                <i class="fas fa-moon"></i>
-            </button>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <header class="min-h-screen flex items-center justify-center pt-20 px-6">
-        <div class="max-w-4xl text-center">
-            <h1 class="text-5xl md:text-7xl font-bold mb-6">Hi, I'm <span class="gradient-text">Karthick Vadivel</span></h1>
-            <p class="text-xl md:text-2xl text-slate-600 mb-8 leading-relaxed">
+    <header class="min-h-screen flex items-center justify-center pt-20 px-6 relative">
+        <div class="max-w-4xl text-center reveal">
+           
+            <h1 class="text-5xl md:text-7xl font-extrabold mb-6 tracking-tight text-white">
+                Hi, I'm <br class="md:hidden" /><span class="gradient-text">Karthick Vadivel</span>
+            </h1>
+            <p class="text-lg md:text-2xl text-slate-400 mb-10 leading-relaxed max-w-3xl mx-auto font-light">
                 Senior Data Scientist specialized in building scalable AI solutions, predictive modeling, and transforming complex data into actionable business insights.
             </p>
-            <div class="flex flex-wrap justify-center gap-4">
-                <a href="#projects" class="bg-indigo-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition shadow-lg">View Work</a>
-                <a href="#contact" class="border-2 border-slate-200 px-8 py-3 rounded-lg font-semibold hover:border-indigo-600 hover:text-indigo-600 transition">Get In Touch</a>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="#experience" class="w-full sm:w-auto bg-indigo-600 text-white px-8 py-3.5 rounded-xl font-semibold hover:bg-indigo-500 hover:shadow-lg hover:shadow-indigo-500/30 transition-all duration-300 transform hover:-translate-y-1">
+                    View Experience <i class="fas fa-arrow-down ml-2 text-sm animate-bounce"></i>
+                </a>
+                <a href="mailto:karthick.vadivel@email.com" class="w-full sm:w-auto glass-card px-8 py-3.5 rounded-xl font-semibold border border-slate-700 hover:border-indigo-500 hover:text-indigo-400 transition-all duration-300">
+                    <i class="fas fa-envelope mr-2"></i> Email Me
+                </a>
             </div>
-            <div class="mt-12 flex justify-center space-x-6 text-2xl text-slate-400">
-                <a href="#" class="hover:text-indigo-600 transition"><i class="fab fa-github"></i></a>
-                <a href="#" class="hover:text-indigo-600 transition"><i class="fab fa-linkedin"></i></a>
-                <a href="#" class="hover:text-indigo-600 transition"><i class="fab fa-medium"></i></a>
+            <div class="mt-16 flex justify-center space-x-8 text-2xl text-slate-500">
+                <a href="#" class="hover:text-white hover:scale-125 transition-all duration-300" title="GitHub"><i class="fab fa-github"></i></a>
+                <a href="https://www.linkedin.com/in/karthick-vadivel" target="_blank" class="hover:text-indigo-400 hover:scale-125 transition-all duration-300" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                <a href="https://scholar.google.com/citations?user=jjoz8MMAAAAJ&hl=en" target="_blank" class="hover:text-white hover:scale-125 transition-all duration-300" title="Google Scholar"><i class="fas fa-graduation-cap"></i></a>
+                <a href="#" class="hover:text-white hover:scale-125 transition-all duration-300" title="Medium"><i class="fab fa-medium"></i></a>
             </div>
         </div>
     </header>
 
     <!-- Skills Section -->
-    <section id="about" class="bg-white">
-        <div class="max-w-6xl mx-auto px-6">
-            <h2 class="text-3xl font-bold mb-12 text-center">Technical Arsenal</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="p-6 rounded-2xl bg-slate-50">
-                    <div class="text-indigo-600 mb-4 text-3xl"><i class="fas fa-brain"></i></div>
-                    <h3 class="text-xl font-bold mb-4">Machine Learning</h3>
+    <section id="about" class="py-24 relative z-10">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-4xl font-extrabold mb-4 text-white">Technical Arsenal</h2>
+                <div class="w-24 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 mx-auto rounded-full"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Machine Learning -->
+                <div class="p-8 rounded-2xl glass-card border-t-4 border-t-indigo-500 hover:border-indigo-400 reveal">
+                    <div class="w-14 h-14 bg-indigo-900/50 rounded-xl flex items-center justify-center text-indigo-400 mb-6 text-2xl animate-float shadow-lg shadow-indigo-500/20">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-5 text-white">Machine Learning</h3>
                     <div class="flex flex-wrap gap-2">
-                        <span class="skill-tag bg-white px-3 py-1 rounded-full text-sm border border-slate-100">Scikit-Learn</span>
-                        <span class="skill-tag bg-white px-3 py-1 rounded-full text-sm border border-slate-100">XGBoost</span>
-                        <span class="skill-tag bg-white px-3 py-1 rounded-full text-sm border border-slate-100">PyTorch</span>
-                        <span class="skill-tag bg-white px-3 py-1 rounded-full text-sm border border-slate-100">TensorFlow</span>
-                        <span class="skill-tag bg-white px-3 py-1 rounded-full text-sm border border-slate-100">NLP</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">GenAI</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">Deep Learning</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">NLP</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">Computer Vision</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">Supervised Learning</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700">PyTorch</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700">TensorFlow</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700">Scikit-learn</span>
                     </div>
                 </div>
-                <div class="p-6 rounded-2xl bg-slate-50">
-                    <div class="text-indigo-600 mb-4 text-3xl"><i class="fas fa-database"></i></div>
-                    <h3 class="text-xl font-bold mb-4">Data Engineering</h3>
+
+                <!-- Generative AI & LLMs -->
+                <div class="p-8 rounded-2xl glass-card border-t-4 border-t-purple-500 hover:border-purple-400 reveal" style="transition-delay: 100ms;">
+                    <div class="w-14 h-14 bg-purple-900/50 rounded-xl flex items-center justify-center text-purple-400 mb-6 text-2xl animate-float shadow-lg shadow-purple-500/20" style="animation-delay: 0.5s;">
+                        <i class="fas fa-magic"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-5 text-white">GenAI & LLMs</h3>
                     <div class="flex flex-wrap gap-2">
-                        <span class="skill-tag bg-white px-3 py-1 rounded-full text-sm border border-slate-100">SQL / NoSQL</span>
-                        <span class="skill-tag bg-white px-3 py-1 rounded-full text-sm border border-slate-100">Apache Spark</span>
-                        <span class="skill-tag bg-white px-3 py-1 rounded-full text-sm border border-slate-100">Airflow</span>
-                        <span class="skill-tag bg-white px-3 py-1 rounded-full text-sm border border-slate-100">ETL Pipelines</span>
-                        <span class="skill-tag bg-white px-3 py-1 rounded-full text-sm border border-slate-100">BigQuery</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-purple-500/10 text-purple-300 border border-purple-500/20">LangChain</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-purple-500/10 text-purple-300 border border-purple-500/20">LangGraph</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-purple-500/10 text-purple-300 border border-purple-500/20">GraphRAG</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700">GPT-4o</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700">Ollama</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700">Pixtral</span>
                     </div>
                 </div>
-                <div class="p-6 rounded-2xl bg-slate-50">
-                    <div class="text-indigo-600 mb-4 text-3xl"><i class="fas fa-cloud"></i></div>
-                    <h3 class="text-xl font-bold mb-4">Tools & Cloud</h3>
+
+                <!-- Data Analysis -->
+                <div class="p-8 rounded-2xl glass-card border-t-4 border-t-pink-500 hover:border-pink-400 reveal" style="transition-delay: 200ms;">
+                    <div class="w-14 h-14 bg-pink-900/50 rounded-xl flex items-center justify-center text-pink-400 mb-6 text-2xl animate-float shadow-lg shadow-pink-500/20" style="animation-delay: 1s;">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-5 text-white">Data Analysis</h3>
                     <div class="flex flex-wrap gap-2">
-                        <span class="skill-tag bg-white px-3 py-1 rounded-full text-sm border border-slate-100">AWS / GCP</span>
-                        <span class="skill-tag bg-white px-3 py-1 rounded-full text-sm border border-slate-100">Docker</span>
-                        <span class="skill-tag bg-white px-3 py-1 rounded-full text-sm border border-slate-100">MLOps</span>
-                        <span class="skill-tag bg-white px-3 py-1 rounded-full text-sm border border-slate-100">Kubernetes</span>
-                        <span class="skill-tag bg-white px-3 py-1 rounded-full text-sm border border-slate-100">Git</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-pink-500/10 text-pink-300 border border-pink-500/20">Statistical Modeling</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-pink-500/10 text-pink-300 border border-pink-500/20">Hypothesis Testing</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-pink-500/10 text-pink-300 border border-pink-500/20">A/B Testing</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-pink-500/10 text-pink-300 border border-pink-500/20">Time Series Analysis</span>
+                    </div>
+                </div>
+
+                <!-- Programming & Frontend -->
+                <div class="p-8 rounded-2xl glass-card border-t-4 border-t-blue-500 hover:border-blue-400 reveal" style="transition-delay: 300ms;">
+                    <div class="w-14 h-14 bg-blue-900/50 rounded-xl flex items-center justify-center text-blue-400 mb-6 text-2xl animate-float shadow-lg shadow-blue-500/20" style="animation-delay: 1.5s;">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-5 text-white">Languages & UI</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-500/10 text-blue-300 border border-blue-500/20">Python</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-500/10 text-blue-300 border border-blue-500/20">SQL</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-500/10 text-blue-300 border border-blue-500/20">R</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700">TypeScript</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700">Angular</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700">HTML</span>
+                    </div>
+                </div>
+
+                <!-- Visualization & Tools -->
+                <div class="p-8 rounded-2xl glass-card border-t-4 border-t-emerald-500 hover:border-emerald-400 reveal" style="transition-delay: 400ms;">
+                    <div class="w-14 h-14 bg-emerald-900/50 rounded-xl flex items-center justify-center text-emerald-400 mb-6 text-2xl animate-float shadow-lg shadow-emerald-500/20" style="animation-delay: 2s;">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-5 text-white">Visualization</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">Spotfire</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">Power BI</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700">Streamlit</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700">Dash</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700">Matplotlib</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700">Plotly</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700">Seaborn</span>
+                    </div>
+                </div>
+
+                <!-- Data & Cloud Infrastructure -->
+                <div class="p-8 rounded-2xl glass-card border-t-4 border-t-amber-500 hover:border-amber-400 reveal" style="transition-delay: 500ms;">
+                    <div class="w-14 h-14 bg-amber-900/50 rounded-xl flex items-center justify-center text-amber-400 mb-6 text-2xl animate-float shadow-lg shadow-amber-500/20" style="animation-delay: 2.5s;">
+                        <i class="fas fa-server"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-5 text-white">Cloud & Data</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/20">Azure</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/20">GCP</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/20">PostgreSQL</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/20">Milvus</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/20">Neo4j</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700">Dataiku</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700">Docker</span>
+                        <span class="skill-tag px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700">CI/CD</span>
                     </div>
                 </div>
             </div>
@@ -124,91 +302,103 @@
     </section>
 
     <!-- Experience Section -->
-    <section id="experience">
-        <div class="max-w-4xl mx-auto px-6">
-            <h2 class="text-3xl font-bold mb-12 text-center">Professional Journey</h2>
-            <div class="space-y-12">
-                <div class="relative pl-8 border-l-2 border-indigo-200">
-                    <div class="absolute w-4 h-4 bg-indigo-600 rounded-full -left-[9px] top-1"></div>
-                    <span class="text-indigo-600 font-bold">2021 — Present</span>
-                    <h3 class="text-2xl font-bold mt-1">Senior Data Scientist</h3>
-                    <p class="text-slate-500 mb-4 italic">Lead Tech Solutions Inc.</p>
-                    <ul class="list-disc list-inside text-slate-600 space-y-2">
-                        <li>Designed and deployed an end-to-end recommendation engine increasing CTR by 25%.</li>
-                        <li>Lead a team of 4 data scientists in optimizing supply chain forecasting models.</li>
-                        <li>Reduced cloud infrastructure costs by 30% through model pruning and efficient pipeline scheduling.</li>
-                    </ul>
-                </div>
-                <div class="relative pl-8 border-l-2 border-indigo-200">
-                    <div class="absolute w-4 h-4 bg-indigo-600 rounded-full -left-[9px] top-1"></div>
-                    <span class="text-indigo-600 font-bold">2018 — 2021</span>
-                    <h3 class="text-2xl font-bold mt-1">Data Scientist</h3>
-                    <p class="text-slate-500 mb-4 italic">Innovate Analytics Group</p>
-                    <ul class="list-disc list-inside text-slate-600 space-y-2">
-                        <li>Developed sentiment analysis tools processing 1M+ customer reviews daily.</li>
-                        <li>Automated financial reporting dashboards using Python and Tableau.</li>
-                        <li>Built fraud detection systems with 98% recall rate using ensemble methods.</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Projects Section -->
-    <section id="projects" class="bg-slate-900 text-white">
+    <section id="experience" class="py-24 relative">
+        <div class="absolute inset-0 bg-slate-800/20 -z-10"></div>
+        
         <div class="max-w-6xl mx-auto px-6">
-            <h2 class="text-3xl font-bold mb-12 text-center">Featured Projects</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="group bg-slate-800 rounded-2xl overflow-hidden hover:scale-[1.02] transition duration-300">
-                    <div class="h-48 bg-indigo-500 flex items-center justify-center">
-                        <i class="fas fa-chart-line text-6xl opacity-50"></i>
+            <div class="text-center mb-20 reveal">
+                <h2 class="text-4xl font-extrabold mb-4 text-white">Professional Journey</h2>
+                <div class="w-24 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 mx-auto rounded-full"></div>
+            </div>
+            
+            <div class="timeline-container pb-8" id="timeline">
+                <div class="timeline-line"></div>
+
+                <!-- SLB Experience -->
+                <div class="timeline-item flex flex-col md:flex-row items-center w-full reveal">
+                    <div class="md:w-1/2 md:pr-12 md:text-right w-full mb-8 md:mb-0 group">
+                        <div class="glass-card p-8 rounded-2xl group-hover:border-indigo-500/50 group-hover:bg-slate-800/60">
+                            <span class="inline-block px-3 py-1 bg-indigo-900/50 text-indigo-300 rounded-full text-xs font-bold mb-3 tracking-wider uppercase shadow-inner shadow-indigo-500/20">Jul 2016 — Present</span>
+                            <h3 class="text-2xl font-bold text-white">Senior Data Scientist</h3>
+                            <p class="text-indigo-400 font-medium mb-5">SLB, Pune</p>
+                            <ul class="text-slate-400 space-y-3 text-sm text-left md:text-right md:flex md:flex-col md:items-end">
+                                <li class="flex md:flex-row-reverse items-start">
+                                    <span class="mr-3 md:mr-0 md:ml-3 text-indigo-500 mt-1"><i class="fas fa-check-circle text-xs"></i></span>
+                                    <span>Architecting high-performance ML models for industrial applications.</span>
+                                </li>
+                                <li class="flex md:flex-row-reverse items-start">
+                                    <span class="mr-3 md:mr-0 md:ml-3 text-indigo-500 mt-1"><i class="fas fa-check-circle text-xs"></i></span>
+                                    <span>Spearheading analytics to optimize operational efficiency globally.</span>
+                                </li>
+                                <li class="flex md:flex-row-reverse items-start">
+                                    <span class="mr-3 md:mr-0 md:ml-3 text-indigo-500 mt-1"><i class="fas fa-check-circle text-xs"></i></span>
+                                    <span>Mentoring teams to deliver scalable AI solutions.</span>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
-                    <div class="p-8">
-                        <h3 class="text-xl font-bold mb-3">Real-time Churn Prediction</h3>
-                        <p class="text-slate-400 mb-6">A streaming pipeline using Kafka and Spark to predict customer churn in real-time with 92% accuracy.</p>
-                        <div class="flex gap-4">
-                            <span class="text-xs font-mono bg-slate-700 px-2 py-1 rounded">Python</span>
-                            <span class="text-xs font-mono bg-slate-700 px-2 py-1 rounded">Spark</span>
-                            <span class="text-xs font-mono bg-slate-700 px-2 py-1 rounded">Kafka</span>
+                    <div class="timeline-dot"></div>
+                    <div class="md:w-1/2 md:pl-12 w-full hidden md:block"></div>
+                </div>
+
+                <!-- Citi Experience -->
+                <div class="timeline-item flex flex-col md:flex-row items-center w-full reveal" style="transition-delay: 200ms;">
+                    <div class="md:w-1/2 md:pr-12 w-full hidden md:block"></div>
+                    <div class="timeline-dot" style="transition-delay: 200ms;"></div>
+                    <div class="md:w-1/2 md:pl-12 w-full group">
+                        <div class="glass-card p-8 rounded-2xl group-hover:border-purple-500/50 group-hover:bg-slate-800/60">
+                            <span class="inline-block px-3 py-1 bg-purple-900/50 text-purple-300 rounded-full text-xs font-bold mb-3 tracking-wider uppercase shadow-inner shadow-purple-500/20">Mar 2014 — Jun 2016</span>
+                            <h3 class="text-2xl font-bold text-white">Big Data Dev / Data Scientist</h3>
+                            <p class="text-purple-400 font-medium mb-5">Citi, Pune <span class="text-sm font-normal text-slate-500">(2.4 yrs)</span></p>
+                            <ul class="text-slate-400 space-y-3 text-sm text-left">
+                                <li class="flex items-start">
+                                    <span class="mr-3 text-purple-500 mt-1"><i class="fas fa-check-circle text-xs"></i></span>
+                                    <span>Developed large-scale processing pipelines for risk assessment.</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="mr-3 text-purple-500 mt-1"><i class="fas fa-check-circle text-xs"></i></span>
+                                    <span>Implemented ETL processes using Hadoop and Spark.</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="mr-3 text-purple-500 mt-1"><i class="fas fa-check-circle text-xs"></i></span>
+                                    <span>Translated complex data into actionable financial insights.</span>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
-                <div class="group bg-slate-800 rounded-2xl overflow-hidden hover:scale-[1.02] transition duration-300">
-                    <div class="h-48 bg-purple-500 flex items-center justify-center">
-                        <i class="fas fa-robot text-6xl opacity-50"></i>
-                    </div>
-                    <div class="p-8">
-                        <h3 class="text-xl font-bold mb-3">Enterprise LLM Assistant</h3>
-                        <p class="text-slate-400 mb-6">Custom RAG (Retrieval-Augmented Generation) system built on proprietary documentation for internal automation.</p>
-                        <div class="flex gap-4">
-                            <span class="text-xs font-mono bg-slate-700 px-2 py-1 rounded">LangChain</span>
-                            <span class="text-xs font-mono bg-slate-700 px-2 py-1 rounded">Pinecone</span>
-                            <span class="text-xs font-mono bg-slate-700 px-2 py-1 rounded">OpenAI</span>
+
+                <!-- Tech Mahindra Experience -->
+                <div class="timeline-item flex flex-col md:flex-row items-center w-full reveal" style="transition-delay: 400ms;">
+                    <div class="md:w-1/2 md:pr-12 md:text-right w-full group">
+                        <div class="glass-card p-8 rounded-2xl group-hover:border-pink-500/50 group-hover:bg-slate-800/60">
+                            <span class="inline-block px-3 py-1 bg-pink-900/50 text-pink-300 rounded-full text-xs font-bold mb-3 tracking-wider uppercase shadow-inner shadow-pink-500/20">Mar 2011 — Feb 2014</span>
+                            <h3 class="text-2xl font-bold text-white">Big Data / Java Developer</h3>
+                            <p class="text-pink-400 font-medium mb-5">Tech Mahindra, Pune <span class="text-sm font-normal text-slate-500">(3 yrs)</span></p>
+                            <ul class="text-slate-400 space-y-3 text-sm text-left md:text-right md:flex md:flex-col md:items-end">
+                                <li class="flex md:flex-row-reverse items-start">
+                                    <span class="mr-3 md:mr-0 md:ml-3 text-pink-500 mt-1"><i class="fas fa-check-circle text-xs"></i></span>
+                                    <span>Engineered enterprise Java apps integrated with Big Data solutions.</span>
+                                </li>
+                                <li class="flex md:flex-row-reverse items-start">
+                                    <span class="mr-3 md:mr-0 md:ml-3 text-pink-500 mt-1"><i class="fas fa-check-circle text-xs"></i></span>
+                                    <span>Optimized DB performance for distributed computing.</span>
+                                </li>
+                                <li class="flex md:flex-row-reverse items-start">
+                                    <span class="mr-3 md:mr-0 md:ml-3 text-pink-500 mt-1"><i class="fas fa-check-circle text-xs"></i></span>
+                                    <span>Managed full SDLC lifecycle from design to deployment.</span>
+                                </li>
+                            </ul>
                         </div>
                     </div>
+                    <div class="timeline-dot" style="transition-delay: 400ms;"></div>
+                    <div class="md:w-1/2 md:pl-12 w-full hidden md:block"></div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Contact Section -->
-    <section id="contact">
-        <div class="max-w-xl mx-auto px-6 text-center">
-            <h2 class="text-3xl font-bold mb-6">Let's Connect</h2>
-            <p class="text-slate-600 mb-10">Whether you're looking for collaboration or just want to talk about data science, I'd love to hear from you.</p>
-            <div class="flex flex-col items-center space-y-4">
-                <a href="mailto:karthick@example.com" class="text-2xl font-bold text-indigo-600 hover:underline">karthick.vadivel@email.com</a>
-                <p class="text-slate-400">Chennai, India / Remote</p>
-                <div class="flex space-x-4 pt-6">
-                    <a href="#" class="w-12 h-12 flex items-center justify-center rounded-full bg-slate-100 text-slate-700 hover:bg-indigo-600 hover:text-white transition"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="#" class="w-12 h-12 flex items-center justify-center rounded-full bg-slate-100 text-slate-700 hover:bg-indigo-600 hover:text-white transition"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="w-12 h-12 flex items-center justify-center rounded-full bg-slate-100 text-slate-700 hover:bg-indigo-600 hover:text-white transition"><i class="fab fa-github"></i></a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <footer class="py-10 border-t border-slate-100 text-center text-slate-400 text-sm">
+    <footer class="py-10 border-t border-slate-800 text-center text-slate-500 text-sm font-medium relative z-10">
         <p>&copy; <span id="year"></span> Karthick Vadivel. Built with passion and data.</p>
     </footer>
 
@@ -216,31 +406,59 @@
         // Update year
         document.getElementById('year').textContent = new Date().getFullYear();
 
-        // Simple dark mode toggle logic
-        const themeToggle = document.getElementById('theme-toggle');
-        const icon = themeToggle.querySelector('i');
-        
-        themeToggle.addEventListener('click', () => {
-            document.documentElement.classList.toggle('dark');
-            if (document.documentElement.classList.contains('dark')) {
-                icon.classList.replace('fa-moon', 'fa-sun');
-                document.body.classList.replace('bg-slate-50', 'bg-slate-900');
-                document.body.classList.add('text-white');
-            } else {
-                icon.classList.replace('fa-sun', 'fa-moon');
-                document.body.classList.replace('bg-slate-900', 'bg-slate-50');
-                document.body.classList.remove('text-white');
-            }
-        });
-
-        // Smooth scroll for nav links
+        // Smooth scroll
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
             });
+        });
+
+        // Scroll reveal animation for all items
+        const revealElements = document.querySelectorAll('.reveal');
+        const revealCallback = (entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        };
+        const revealObserver = new IntersectionObserver(revealCallback, {
+            threshold: 0.15,
+            rootMargin: "0px 0px -50px 0px"
+        });
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // Specialized Observer for drawing the timeline and popping the dots
+        const timelineContainer = document.getElementById('timeline');
+        const timelineItems = document.querySelectorAll('.timeline-item');
+        
+        const timelineCallback = (entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Start drawing the vertical line
+                    timelineContainer.classList.add('active');
+                    // Pop dots in sequence
+                    timelineItems.forEach(item => item.classList.add('active'));
+                    observer.unobserve(entry.target);
+                }
+            });
+        };
+        const timelineObserver = new IntersectionObserver(timelineCallback, { threshold: 0.2 });
+        if(timelineContainer) timelineObserver.observe(timelineContainer);
+
+        // Navbar shadow effect on scroll
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 20) {
+                navbar.classList.add('shadow-lg', 'shadow-indigo-900/10');
+            } else {
+                navbar.classList.remove('shadow-lg', 'shadow-indigo-900/10');
+            }
         });
     </script>
 </body>
