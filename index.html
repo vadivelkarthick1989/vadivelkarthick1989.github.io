@@ -443,7 +443,10 @@
                             
                             <span class="inline-block px-5 py-2 bg-indigo-950/80 border border-indigo-500/40 text-indigo-300 rounded-full text-xs font-black mb-5 tracking-widest uppercase shadow-[0_0_15px_rgba(79,70,229,0.3)] backdrop-blur-md">Jul 2016 — Present</span>
                             <h3 class="text-3xl font-bold text-white mb-2 tracking-tight">Senior Data Scientist</h3>
-                            <p class="text-indigo-400 font-semibold tracking-wider mb-8 text-lg uppercase text-sm drop-shadow-sm">SLB, Pune</p>
+                            <div class="flex items-center md:justify-end mb-8">
+                                <p class="text-indigo-400 font-semibold tracking-wider text-lg uppercase text-sm drop-shadow-sm">SLB, Pune</p>
+                                <span id="slb-duration" class="text-xs font-bold text-slate-400 ml-3 bg-slate-800/80 border border-slate-600 px-2.5 py-1 rounded-md tracking-wider"></span>
+                            </div>
                             <ul class="text-slate-300 space-y-4 text-sm md:text-base text-left md:text-right md:flex md:flex-col md:items-end font-medium leading-relaxed">
                                 <li class="flex md:flex-row-reverse items-start group-hover:text-white transition-colors">
                                     <span class="mr-4 md:mr-0 md:ml-4 text-indigo-500 mt-1 drop-shadow-md text-lg"><i class="fas fa-check-circle"></i></span>
@@ -538,6 +541,28 @@
     </footer>
 
     <script>
+        // Dynamic duration calculation for SLB
+        function calculateDuration(startDate) {
+            const start = new Date(startDate);
+            const now = new Date();
+            let years = now.getFullYear() - start.getFullYear();
+            let months = now.getMonth() - start.getMonth();
+
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+
+            // Calculate precise decimal years (e.g., 8.5)
+            const totalYears = years + (months / 12);
+            // Format to 1 decimal place and add 'YRS'
+            return totalYears.toFixed(1) + ' YRS';
+        }
+
+        // July 2016 (month is 0-indexed, so 6 is July)
+        const slbStartDate = new Date(2016, 6, 1);
+        document.getElementById('slb-duration').textContent = calculateDuration(slbStartDate);
+
         // Update year
         document.getElementById('year').textContent = new Date().getFullYear();
 
@@ -568,7 +593,7 @@
         });
         revealElements.forEach(el => revealObserver.observe(el));
 
-        // Timeline drawing and dot poppin
+        // Timeline drawing and dot popping
         const timelineContainer = document.getElementById('timeline');
         const timelineItems = document.querySelectorAll('.timeline-item');
         
