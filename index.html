@@ -55,6 +55,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            cursor: none !important; /* Hide real cursor for custom one */
         }
 
         html {
@@ -78,6 +79,62 @@
 
         ul {
             list-style: none;
+        }
+
+        /* ==========================================================================
+           CUSTOM CURSOR
+           ========================================================================== */
+        .cursor-dot, .cursor-outline {
+            pointer-events: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 99999;
+            transition: opacity 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--indigo-400);
+        }
+
+        .cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--indigo-400);
+            opacity: 0.5;
+            will-change: transform;
+        }
+
+        .cursor-active .cursor-dot {
+            transform: translate(-50%, -50%) scale(0.5);
+            background-color: var(--fuchsia-400);
+        }
+
+        .cursor-active .cursor-outline {
+            border-color: var(--fuchsia-400);
+            background-color: rgba(232, 121, 249, 0.1);
+            opacity: 0.8;
+        }
+
+        /* Click Ripple Effect */
+        .click-ripple {
+            position: fixed;
+            border: 2px solid var(--indigo-400);
+            width: 2px;
+            height: 2px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99998;
+            animation: ripple-out 0.6s ease-out forwards;
+        }
+
+        @keyframes ripple-out {
+            from { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+            to { transform: translate(-50%, -50%) scale(60); opacity: 0; }
         }
 
         /* ==========================================================================
@@ -168,7 +225,7 @@
         @keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(192, 38, 211, 0.6); } 70% { box-shadow: 0 0 0 15px rgba(192, 38, 211, 0); } 100% { box-shadow: 0 0 0 0 rgba(192, 38, 211, 0); } }
 
         .animate-float { animation: float 6s ease-in-out infinite; }
-        .bg-blob { will-change: transform; position: absolute; border-radius: 50%; mix-blend-mode: screen; }
+        .bg-blob { will-change: transform; position: absolute; border-radius: 50%; mix-blend-mode: screen; transition: transform 0.6s cubic-bezier(0.2, 0, 0.2, 1); }
         .blob-1 { top: -10%; left: -10%; background: rgba(88, 28, 135, 0.4); } /* purple-900 */
         .blob-2 { top: 20%; right: -10%; background: rgba(49, 46, 129, 0.4); animation-delay: 2s; } /* indigo-900 */
         .blob-3 { bottom: -20%; background: rgba(112, 26, 117, 0.2); animation-delay: 4s; } /* fuchsia-900 */
@@ -177,12 +234,13 @@
         #cursor-spotlight {
             top: 0; left: 0;
             width: 60vw; height: 60vw;
-            background: radial-gradient(circle closest-side, rgba(129, 140, 248, 0.1), transparent);
+            background: radial-gradient(circle closest-side, rgba(129, 140, 248, 0.08), transparent);
             transform: translate(-50%, -50%);
             pointer-events: none;
             opacity: 0; 
-            transition: opacity 0.3s ease;
+            transition: opacity 0.5s ease;
             will-change: transform;
+            z-index: 1;
         }
 
         /* Scroll Reveal */
@@ -275,6 +333,7 @@
         
         /* Buttons */
         .btn-group { gap: 1rem; width: 100%; padding: 0 1rem; }
+        .btn-container { width: 100%; }
         .btn {
             display: block; width: 100%; text-align: center;
             padding: 0.875rem 2rem;
@@ -305,7 +364,7 @@
             border-color: var(--fuchsia-500);
         }
 
-        .btn-glow-wrapper { position: relative; width: 100%; }
+        .btn-glow-wrapper { position: relative; }
         .btn-glow-wrapper::before {
             content: ''; position: absolute;
             inset: -2px;
@@ -464,6 +523,7 @@
             .hero-title { font-size: 3.75rem; }
             .hero-desc { font-size: 1.125rem; }
             .btn-group { width: auto; padding: 0; flex-direction: row; }
+            .btn-container { width: auto; }
             .btn { padding: 0.875rem 2.5rem; width: auto; }
             .skills-grid { grid-template-columns: repeat(2, 1fr); }
             .nav-logo { font-size: 1.875rem; }
@@ -541,7 +601,7 @@
                 background: var(--fuchsia-500);
                 animation: pulse-ring 2s infinite;
             }
-            .magnetic { display: inline-block; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); will-change: transform; }
+            .magnetic { display: inline-block; transition: transform 0.3s cubic-bezier(0.2, 0, 0.2, 1); will-change: transform; }
             .social-icon-main:hover, .social-icon-alt:hover { transform: translateY(-8px) scale(1.1); color: var(--text-dim); }
             .social-link-wrapper:hover .social-bg-glow { opacity: 0.6; }
             
@@ -561,11 +621,18 @@
         @media (max-width: 767px) {
             .bg-blob { width: 300px; height: 300px; filter: blur(80px); }
             .blob-3 { width: 350px; height: 350px; left: 10%; }
+            /* Show real cursor on mobile */
+            * { cursor: auto !important; }
+            .cursor-dot, .cursor-outline { display: none; }
         }
     </style>
 </head>
 <body>
     
+    <!-- Premium Custom Cursor -->
+    <div class="cursor-dot" id="cursor-dot"></div>
+    <div class="cursor-outline" id="cursor-outline"></div>
+
     <!-- Premium Noise Overlay & Spotlight -->
     <div class="noise-bg"></div>
     <div id="cursor-spotlight" class="hidden md:block"></div>
@@ -573,25 +640,25 @@
     <!-- Deep Space Grid & Aurora Blobs -->
     <div class="fixed inset-0 w-full h-full pointer-events-none z-0 overflow-hidden">
         <div class="absolute inset-0 bg-grid"></div>
-        <div class="bg-blob blob-1"></div>
-        <div class="bg-blob blob-2"></div>
-        <div class="bg-blob blob-3"></div>
+        <div class="bg-blob blob-1" id="blob-1"></div>
+        <div class="bg-blob blob-2" id="blob-2"></div>
+        <div class="bg-blob blob-3" id="blob-3"></div>
     </div>
 
     <!-- Navigation -->
     <nav class="fixed w-full z-50 navbar flex flex-col" id="navbar">
         <!-- Main Nav Bar -->
         <div class="container max-w-6xl flex justify-between items-center nav-inner w-full">
-            <a href="#" class="nav-logo font-black tracking-tighter gradient-text relative group">
+            <a href="#" class="nav-logo font-black tracking-tighter gradient-text relative group magnetic" data-magnetic-strength="15">
                 KV.
                 <span class="absolute nav-logo-line hidden md:block"></span>
             </a>
             <div class="flex nav-links font-semibold tracking-widest uppercase">
-                <a href="#about" class="nav-link relative py-1">
+                <a href="#about" class="nav-link relative py-1 magnetic" data-magnetic-strength="10">
                     About
                     <span class="absolute nav-link-line line-indigo"></span>
                 </a>
-                <a href="#experience" class="nav-link relative py-1">
+                <a href="#experience" class="nav-link relative py-1 magnetic" data-magnetic-strength="10">
                     Experience
                     <span class="absolute nav-link-line line-fuchsia"></span>
                 </a>
@@ -613,7 +680,7 @@
                 <i class="fas fa-sparkles mr-2 text-indigo-400" style="margin-right:0.5rem; color:var(--indigo-400);"></i> Senior Data Scientist
             </div>
             
-            <h1 class="hero-title font-black text-white">
+            <h1 class="hero-title font-black text-white magnetic" data-magnetic-strength="12">
                 Hi, I'm <br class="sm:hidden" />
                 <span class="gradient-text inline-block transition-transform duration-500 cursor-default">Karthick Vadivel</span>
             </h1>
@@ -623,24 +690,30 @@
             </p>
             
             <div class="flex flex-col items-center justify-center btn-group sm:flex-row">
-                <div class="btn-glow-wrapper group">
-                    <a href="#experience" class="btn btn-primary">
-                        Explore Journey <i class="fas fa-arrow-down" style="margin-left: 0.5rem; font-size: 0.875rem;"></i>
+                <!-- Properly Aligned Button Container 1 -->
+                <div class="btn-container magnetic" data-magnetic-strength="25">
+                    <div class="btn-glow-wrapper group">
+                        <a href="#experience" class="btn btn-primary">
+                            Explore Journey <i class="fas fa-arrow-down" style="margin-left: 0.5rem; font-size: 0.875rem;"></i>
+                        </a>
+                    </div>
+                </div>
+                <!-- Properly Aligned Button Container 2 -->
+                <div class="btn-container magnetic" data-magnetic-strength="20">
+                    <a href="mailto:karthick.vadivel@email.com" class="btn btn-secondary">
+                        <i class="fas fa-envelope" style="margin-right: 0.5rem; color: var(--fuchsia-400);"></i> Get in Touch
                     </a>
                 </div>
-                <a href="mailto:karthick.vadivel@email.com" class="btn btn-secondary">
-                    <i class="fas fa-envelope" style="margin-right: 0.5rem; color: var(--fuchsia-400);"></i> Get in Touch
-                </a>
             </div>
             
             <!-- Social Links -->
             <div class="flex justify-center items-center social-links relative z-20">
-                <a href="https://www.linkedin.com/in/karthick-vadivel" target="_blank" class="magnetic social-link-wrapper relative group" title="LinkedIn" aria-label="LinkedIn Profile">
+                <a href="https://www.linkedin.com/in/karthick-vadivel" target="_blank" class="magnetic social-link-wrapper relative group" title="LinkedIn" aria-label="LinkedIn Profile" data-magnetic-strength="30">
                     <div class="absolute social-bg-glow hidden md:block" style="background: var(--indigo-400);"></div>
                     <i class="fab fa-linkedin social-icon-main relative z-10"></i>
                 </a>
                 
-                <a href="https://scholar.google.com/citations?user=jjoz8MMAAAAJ&hl=en" target="_blank" class="magnetic social-link-wrapper relative group" title="Google Scholar" aria-label="Google Scholar Profile">
+                <a href="https://scholar.google.com/citations?user=jjoz8MMAAAAJ&hl=en" target="_blank" class="magnetic social-link-wrapper relative group" title="Google Scholar" aria-label="Google Scholar Profile" data-magnetic-strength="30">
                     <div class="absolute social-bg-glow hidden md:block" style="background: var(--fuchsia-400);"></div>
                     <i class="fas fa-graduation-cap social-icon-alt relative z-10"></i>
                 </a>
@@ -769,7 +842,7 @@
                 <div class="timeline-item reveal timeline-left">
                     <div class="timeline-content z-20 group">
                         <div class="glass-card">
-                            <span class="timeline-date date-indigo">Jul 2016 — Present</span>
+                            <span class="timeline-date date-indigo">2016 — Present</span>
                             <h3 class="timeline-role font-bold tracking-tight">Senior Data Scientist</h3>
                             <div class="timeline-meta">
                                 <p class="timeline-company c-indigo">SLB, Pune</p>
@@ -797,7 +870,7 @@
                     <div class="timeline-dot" style="transition-delay: 200ms;"></div>
                     <div class="timeline-content z-20 group">
                         <div class="glass-card">
-                            <span class="timeline-date date-fuchsia">Mar 2014 — Jun 2016</span>
+                            <span class="timeline-date date-fuchsia">2014 — 2016</span>
                             <h3 class="timeline-role font-bold tracking-tight">Big Data Dev / Data Scientist</h3>
                             <div class="timeline-meta">
                                 <p class="timeline-company c-fuchsia">Citi, Pune</p>
@@ -821,7 +894,7 @@
                 <div class="timeline-item reveal timeline-left" style="transition-delay: 400ms;">
                     <div class="timeline-content z-20 group">
                         <div class="glass-card">
-                            <span class="timeline-date date-sky">Mar 2011 — Feb 2014</span>
+                            <span class="timeline-date date-sky">2011 — 2014</span>
                             <h3 class="timeline-role font-bold tracking-tight">Big Data / Java Developer</h3>
                             <div class="timeline-meta">
                                 <p class="timeline-company c-sky">Tech Mahindra, Pune</p>
@@ -863,25 +936,103 @@
         // --- Feature Detection for Performance ---
         const isDesktop = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
+        // --- Premium Custom Cursor & Motion Logic ---
+        const dot = document.getElementById('cursor-dot');
+        const outline = document.getElementById('cursor-outline');
+        const spotlight = document.getElementById('cursor-spotlight');
+        const blobs = [document.getElementById('blob-1'), document.getElementById('blob-2'), document.getElementById('blob-3')];
+
+        let cursorX = 0, cursorY = 0;
+        let outlineX = 0, outlineY = 0;
+        let lastX = 0, lastY = 0;
+        let velocity = 0;
+        let angle = 0;
+
+        // LERP for smooth lag effect
+        const lerp = (start, end, amt) => (1 - amt) * start + amt * end;
+
         if (isDesktop) {
-            // 1. Global Cursor Spotlight
-            const spotlight = document.getElementById('cursor-spotlight');
             document.addEventListener('mousemove', (e) => {
+                cursorX = e.clientX;
+                cursorY = e.clientY;
+                
+                // Immediate dot move
+                dot.style.left = `${cursorX}px`;
+                dot.style.top = `${cursorY}px`;
+                
+                // Show cursor components
+                dot.style.opacity = '1';
+                outline.style.opacity = '0.5';
+                spotlight.style.opacity = '1';
+
+                // Spotlight move
                 requestAnimationFrame(() => {
-                    spotlight.style.opacity = '1';
-                    spotlight.style.transform = `translate(${e.clientX - (window.innerWidth*0.3)}px, ${e.clientY - (window.innerWidth*0.3)}px)`;
+                    spotlight.style.transform = `translate(${cursorX - (window.innerWidth*0.3)}px, ${cursorY - (window.innerWidth*0.3)}px)`;
+                    
+                    // Parallax Blobs
+                    const px = (cursorX - window.innerWidth / 2) / (window.innerWidth / 2);
+                    const py = (cursorY - window.innerHeight / 2) / (window.innerHeight / 2);
+                    
+                    blobs[0].style.transform = `translate(${px * 50}px, ${py * 50}px)`;
+                    blobs[1].style.transform = `translate(${px * -70}px, ${py * -70}px)`;
+                    blobs[2].style.transform = `translate(${px * 30}px, ${py * 30}px)`;
                 });
             }, { passive: true });
 
-            // 2. Magnetic Social Icons
+            // Animate outline with lag & deformation (Velocity Stretching)
+            const animateCursor = () => {
+                const dx = cursorX - outlineX;
+                const dy = cursorY - outlineY;
+                
+                outlineX = lerp(outlineX, cursorX, 0.15);
+                outlineY = lerp(outlineY, cursorY, 0.15);
+                
+                // Calculate movement intensity for stretching
+                const currentVelocity = Math.sqrt(dx * dx + dy * dy);
+                velocity = lerp(velocity, currentVelocity, 0.1);
+                
+                // Calculate rotation angle based on move direction
+                if (currentVelocity > 1) {
+                    angle = Math.atan2(dy, dx) * 180 / Math.PI;
+                }
+                
+                const scale = Math.min(1 + velocity / 100, 1.8);
+                const scaleY = Math.max(1 - velocity / 150, 0.6);
+                
+                outline.style.transform = `translate(-50%, -50%) translate(${outlineX}px, ${outlineY}px) rotate(${angle}deg) scale(${scale}, ${scaleY})`;
+                
+                requestAnimationFrame(animateCursor);
+            }
+            animateCursor();
+
+            // Cursor Hover State Management
+            const interactiveElements = document.querySelectorAll('a, button, .glass-card, .magnetic, .hero-badge');
+            interactiveElements.forEach(el => {
+                el.addEventListener('mouseenter', () => document.body.classList.add('cursor-active'));
+                el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-active'));
+            });
+
+            // Click Ripple Effect
+            document.addEventListener('mousedown', (e) => {
+                const ripple = document.createElement('div');
+                ripple.className = 'click-ripple';
+                ripple.style.left = `${e.clientX}px`;
+                ripple.style.top = `${e.clientY}px`;
+                document.body.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            });
+
+            // Magnetic Elements Upgrade
             const magneticElements = document.querySelectorAll('.magnetic');
             magneticElements.forEach(elem => {
                 elem.addEventListener('mousemove', function(e) {
+                    const strength = this.getAttribute('data-magnetic-strength') || 30;
                     const rect = this.getBoundingClientRect();
                     const x = e.clientX - rect.left - rect.width / 2;
                     const y = e.clientY - rect.top - rect.height / 2;
+                    
                     requestAnimationFrame(() => {
-                        this.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px) scale(1.15)`;
+                        this.style.transform = `translate(${x * (strength / 100)}px, ${y * (strength / 100)}px) scale(1.05)`;
                     });
                 });
                 elem.addEventListener('mouseleave', function() {
@@ -891,7 +1042,7 @@
                 });
             });
 
-            // 3. 3D Card Tilt Effect
+            // 3D Card Tilt Effect
             const glassCards = document.querySelectorAll('.glass-card');
             glassCards.forEach(card => {
                 card.addEventListener('mousemove', function(e) {
